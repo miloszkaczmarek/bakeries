@@ -6,12 +6,18 @@ function App() {
   const [bakeries, setBakeries] = useState([]);
 
   useEffect(() => {
-    fetch("https://nominatim.openstreetmap.org/?format=json&addressdetails=1&q=bakery+in+warsaw&format=json&limit=20")
+    fetch("https://nominatim.openstreetmap.org/?format=json&addressdetails=1&q=bakery+in+warsaw&format=json&limit=10")
       .then(res => res.json())
       .then(json => setBakeries(json));
   }, []);
 
-  console.log(bakeries[4]);
+  const handleDelete = e => {
+    const { id } = e.target.parentElement;
+    bakeries.splice(id, 1)
+    setBakeries([...bakeries]);
+  }
+
+  console.log(bakeries[3]);
 
   return (
     <div>
@@ -19,14 +25,22 @@ function App() {
       <ul>
         {bakeries.map((bakery, index) => {
 
-            if(bakery.address.bakery != null && index < 11){
-              return <div>
+            if(bakery.address.bakery == null){
+              return <div id={index}>
+                <h3>Piekarnia</h3>
+                <p>{bakery.address.road} {bakery.address.house_number}, {bakery.address.city}</p>
+                <p>Latitude: {bakery.lat}  Longitute: {bakery.lon}</p>
+                <button className="delete-todo" onClick={handleDelete} >x</button> 
+              </div>
+            }
+            else{
+              return <div id={index}>
                 <h3>{bakery.address.bakery}</h3>
                 <p>{bakery.address.road} {bakery.address.house_number}, {bakery.address.city}</p>
+                <p>Latitude: {bakery.lat}  Longitute: {bakery.lon}</p>
+                <button className="delete-todo" onClick={handleDelete} >x</button> 
               </div>
-
             }
-
           })}
           </ul>
     </div>
